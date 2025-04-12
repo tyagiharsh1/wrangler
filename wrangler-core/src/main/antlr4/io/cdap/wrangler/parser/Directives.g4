@@ -38,9 +38,6 @@ options {
  */
 }
 
-/**
- * Parser Grammar for recognizing tokens and constructs of the directives language.
- */
 recipe
  : statements EOF
  ;
@@ -64,28 +61,30 @@ directive
     | stringList
     | numberRanges
     | properties
+    | byteSizeArg
+    | timeDurationArg
   )*?
   ;
 
 ifStatement
   : ifStat elseIfStat* elseStat? '}'
-  ;
+ ;
 
 ifStat
   : 'if' expression '{' statements
-  ;
+ ;
 
 elseIfStat
   : '}' 'else' 'if' expression '{' statements
-  ;
+ ;
 
 elseStat
   : '}' 'else' '{' statements
-  ;
+ ;
 
 expression
   : '(' (~'(' | expression)* ')'
-  ;
+ ;
 
 forStatement
  : 'for' '(' Identifier '=' expression ';' expression ';' expression ')' '{'  statements '}'
@@ -117,8 +116,8 @@ identifier
 
 properties
  : 'prop' ':' OBrace (propertyList)+  CBrace
- | 'prop' ':' OBrace OBrace (propertyList)+ CBrace { notifyErrorListeners("Too many start paranthesis"); }
- | 'prop' ':' OBrace (propertyList)+ CBrace CBrace { notifyErrorListeners("Too many start paranthesis"); }
+ | 'prop' ':' OBrace OBrace (propertyList)+ CBrace { notifyErrorListeners("Too many start parentheses"); }
+ | 'prop' ':' OBrace (propertyList)+ CBrace CBrace { notifyErrorListeners("Too many start parentheses"); }
  | 'prop' ':' (propertyList)+ CBrace { notifyErrorListeners("Missing opening brace"); }
  | 'prop' ':' OBrace (propertyList)+  { notifyErrorListeners("Missing closing brace"); }
  ;
@@ -140,7 +139,15 @@ numberRange
  ;
 
 value
- : String | Number | Column | Bool
+ : String | Number | Column | Bool | BYTE_SIZE | TIME_DURATION
+ ;
+
+byteSizeArg
+ : BYTE_SIZE
+ ;
+
+timeDurationArg
+ : TIME_DURATION
  ;
 
 ecommand
@@ -215,14 +222,22 @@ StartsWith : '=^';
 NotStartsWith : '!^';
 EndsWith : '=$';
 NotEndsWith : '!$';
-PlusEqual : '+=';
-SubEqual : '-=';
-MulEqual : '*=';
-DivEqual : '/=';
-PerEqual : '%=';
-AndEqual : '&=';
-OrEqual  : '|=';
-XOREqual : '^=';
+PlusEqual : '+='
+;
+SubEqual : '-='
+;
+MulEqual : '*='
+;
+DivEqual : '/='
+;
+PerEqual : '%='
+;
+AndEqual : '&='
+;
+OrEqual  : '|='
+;
+XOREqual : '^='
+;
 Pow      : '^';
 External : '!';
 GT       : '>';
@@ -247,10 +262,25 @@ BackSlash: '\\';
 Dollar   : '$';
 Tilde    : '~';
 
-
 Bool
  : 'true'
  | 'false'
+ ;
+
+BYTE_SIZE
+ : Int ('.' Digit*)? BYTE_UNIT
+ ;
+
+TIME_DURATION
+ : Int ('.' Digit*)? TIME_UNIT
+ ;
+
+fragment BYTE_UNIT
+ : ('B' | 'KB' | 'MB' | 'GB' | 'TB' | 'kb' | 'mb' | 'gb' | 'tb')
+ ;
+
+fragment TIME_UNIT
+ : ('ms' | 's' | 'sec' | 'seconds' | 'm' | 'min' | 'minutes')
  ;
 
 Number
