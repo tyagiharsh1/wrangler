@@ -8,8 +8,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
  */
@@ -23,7 +23,7 @@ import java.io.Serializable;
 /**
  * The TokenType class provides the enumerated types for different types of
  * tokens that are supported by the grammar.
- *
+ * <p>
  * Each of the enumerated types specified in this class also has associated
  * object representing it. e.g. {@code DIRECTIVE_NAME} is represented by the
  * object {@code DirectiveName}.
@@ -66,7 +66,7 @@ public enum TokenType implements Serializable {
 
   /**
    * Represents the enumerated type for the object of {@code Numeric} type.
-   * This type is associated with the token that is either a integer or real number.
+   * This type is associated with the token that is either an integer or real number.
    */
   NUMERIC,
 
@@ -104,7 +104,6 @@ public enum TokenType implements Serializable {
    * <code>
    *   Numeric[,Numeric]*
    * </code>
-   *
    */
   NUMERIC_LIST,
 
@@ -152,5 +151,15 @@ public enum TokenType implements Serializable {
    * Represents the enumerated type for the object of type {@code String} with restrictions
    * on characters that can be present in a string.
    */
-  IDENTIFIER
+  IDENTIFIER,
+
+  /**
+   * Represents the enumerated type for byte size values such as "10KB", "1.5MB", etc.
+   */
+  BYTE_SIZE,
+
+  /**
+   * Represents the enumerated type for time duration values such as "200ms", "2s", etc.
+   */
+  TIME_DURATION
 }

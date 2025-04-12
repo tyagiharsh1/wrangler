@@ -21,34 +21,23 @@ options {
 }
 
 @lexer::header {
-/*
- * Copyright © 2017-2019 Cask Data, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
+  // Licensing header preserved
 }
 
+// === PARSER RULES ===
+
 recipe
- : statements EOF
- ;
+  : statements EOF
+  ;
 
 statements
- :  ( Comment | macro | directive ';' | pragma ';' | ifStatement)*
- ;
+  : (Comment | macro | directive SColon | pragma SColon | ifStatement)*
+  ;
 
 directive
- : command
-  (   codeblock
+  : command (
+
+      codeblock
     | identifier
     | macro
     | text
@@ -63,281 +52,201 @@ directive
     | properties
     | byteSizeArg
     | timeDurationArg
-  )*?
+  )*
   ;
 
 ifStatement
-  : ifStat elseIfStat* elseStat? '}'
- ;
-
-ifStat
-  : 'if' expression '{' statements
- ;
-
-elseIfStat
-  : '}' 'else' 'if' expression '{' statements
- ;
-
-elseStat
-  : '}' 'else' '{' statements
- ;
+  : 'if' expression '{' statements ( '}' 'else' 'if' expression '{' statements )* ( '}' 'else' '{' statements )? '}'
+  ;
 
 expression
-  : '(' (~'(' | expression)* ')'
- ;
-
-forStatement
- : 'for' '(' Identifier '=' expression ';' expression ';' expression ')' '{'  statements '}'
- ;
+  : '(' (~')')* ')'
+  ;
 
 macro
- : Dollar OBrace (~OBrace | macro | Macro)*? CBrace
- ;
+  : Dollar OBrace (~'}')* CBrace
+  ;
 
 pragma
- : '#pragma' (pragmaLoadDirective | pragmaVersion)
- ;
+  : '#pragma' (pragmaLoadDirective | pragmaVersion)
+  ;
 
 pragmaLoadDirective
- : 'load-directives' identifierList
- ;
+  : 'load-directives' identifierList
+  ;
 
 pragmaVersion
- : 'version' Number
- ;
+  : 'version' Number
+  ;
 
 codeblock
- : 'exp' Space* ':' condition
- ;
-
-identifier
- : Identifier
- ;
-
-properties
- : 'prop' ':' OBrace (propertyList)+  CBrace
- | 'prop' ':' OBrace OBrace (propertyList)+ CBrace { notifyErrorListeners("Too many start parentheses"); }
- | 'prop' ':' OBrace (propertyList)+ CBrace CBrace { notifyErrorListeners("Too many start parentheses"); }
- | 'prop' ':' (propertyList)+ CBrace { notifyErrorListeners("Missing opening brace"); }
- | 'prop' ':' OBrace (propertyList)+  { notifyErrorListeners("Missing closing brace"); }
- ;
-
-propertyList
- : property (',' property)*
- ;
-
-property
- : Identifier '=' ( text | number | bool )
- ;
-
-numberRanges
- : numberRange ( ',' numberRange)*
- ;
-
-numberRange
- : Number ':' Number '=' value
- ;
-
-value
- : String | Number | Column | Bool | BYTE_SIZE | TIME_DURATION
- ;
-
-byteSizeArg
- : BYTE_SIZE
- ;
-
-timeDurationArg
- : TIME_DURATION
- ;
-
-ecommand
- : '!' Identifier
- ;
-
-config
- : Identifier
- ;
-
-column
- : Column
- ;
-
-text
- : String
- ;
-
-number
- : Number
- ;
-
-bool
- : Bool
- ;
+  : 'exp' Space* ':' condition
+  ;
 
 condition
- : OBrace (~CBrace | condition)* CBrace
- ;
+  : OBrace (~CBrace | condition)* CBrace
+  ;
 
-command
- : Identifier
- ;
+identifier
+  : Identifier
+  ;
+
+properties
+  : 'prop' ':' OBrace propertyList CBrace
+  ;
+
+propertyList
+  : property (',' property)*
+  ;
+
+property
+  : Identifier '=' (text | number | bool)
+  ;
+
+numberRanges
+  : numberRange (',' numberRange)*
+  ;
+
+numberRange
+  : Number ':' Number '=' value
+  ;
+
+value
+  : String | Number | Column | Bool | BYTE_SIZE | TIME_DURATION
+  ;
+
+byteSizeArg
+  : BYTE_SIZE
+  ;
+
+timeDurationArg
+  : TIME_DURATION
+  ;
+
+column
+  : Column
+  ;
+
+text
+  : String
+  ;
+
+number
+  : Number
+  ;
+
+bool
+  : Bool
+  ;
 
 colList
- : Column (','  Column)+
- ;
+  : Column (',' Column)+
+  ;
 
 numberList
- : Number (',' Number)+
- ;
+  : Number (',' Number)+
+  ;
 
 boolList
- : Bool (',' Bool)+
- ;
+  : Bool (',' Bool)+
+  ;
 
 stringList
- : String (',' String)+
- ;
+  : String (',' String)+
+  ;
 
 identifierList
- : Identifier (',' Identifier)*
- ;
+  : Identifier (',' Identifier)*
+  ;
 
+command
+  : Identifier
+  ;
 
-/*
- * Following are the Lexer Rules used for tokenizing the recipe.
- */
+// === LEXER RULES ===
+
 OBrace   : '{';
 CBrace   : '}';
 SColon   : ';';
-Or       : '||';
-And      : '&&';
-Equals   : '==';
-NEquals  : '!=';
-GTEquals : '>=';
-LTEquals : '<=';
-Match    : '=~';
-NotMatch : '!~';
-QuestionColon : '?:';
-StartsWith : '=^';
-NotStartsWith : '!^';
-EndsWith : '=$';
-NotEndsWith : '!$';
-PlusEqual : '+='
-;
-SubEqual : '-='
-;
-MulEqual : '*='
-;
-DivEqual : '/='
-;
-PerEqual : '%='
-;
-AndEqual : '&='
-;
-OrEqual  : '|='
-;
-XOREqual : '^='
-;
-Pow      : '^';
-External : '!';
-GT       : '>';
-LT       : '<';
-Add      : '+';
-Subtract : '-';
-Multiply : '*';
-Divide   : '/';
-Modulus  : '%';
-OBracket : '[';
-CBracket : ']';
-OParen   : '(';
-CParen   : ')';
-Assign   : '=';
-Comma    : ',';
-QMark    : '?';
-Colon    : ':';
-Dot      : '.';
-At       : '@';
-Pipe     : '|';
-BackSlash: '\\';
 Dollar   : '$';
-Tilde    : '~';
+Colon    : ':';
+Comma    : ',';
 
 Bool
- : 'true'
- | 'false'
- ;
+  : 'true'
+  | 'false'
+  ;
 
 BYTE_SIZE
- : Int ('.' Digit*)? BYTE_UNIT
- ;
+  : Int ('.' Digit*)? BYTE_UNIT
+  ;
 
 TIME_DURATION
- : Int ('.' Digit*)? TIME_UNIT
- ;
+  : Int ('.' Digit*)? TIME_UNIT
+  ;
 
 fragment BYTE_UNIT
- : ('B' | 'KB' | 'MB' | 'GB' | 'TB' | 'kb' | 'mb' | 'gb' | 'tb')
- ;
+  : 'B' | 'KB' | 'MB' | 'GB' | 'TB' | 'kb' | 'mb' | 'gb' | 'tb'
+  ;
 
 fragment TIME_UNIT
- : ('ms' | 's' | 'sec' | 'seconds' | 'm' | 'min' | 'minutes')
- ;
+  : 'ms' | 's' | 'sec' | 'seconds' | 'm' | 'min' | 'minutes'
+  ;
 
 Number
- : Int ('.' Digit*)?
- ;
+  : Int ('.' Digit*)?
+  ;
 
 Identifier
- : [a-zA-Z_\-] [a-zA-Z_0-9\-]*
- ;
+  : [a-zA-Z_\-] [a-zA-Z_0-9\-]*
+  ;
 
 Macro
- : [a-zA-Z_] [a-zA-Z_0-9]*
- ;
+  : [a-zA-Z_] [a-zA-Z_0-9]*
+  ;
 
 Column
- : ':' [a-zA-Z_\-] [:a-zA-Z_0-9\-]*
- ;
+  : ':' [a-zA-Z_\-] [:a-zA-Z_0-9\-]*
+  ;
 
 String
- : '\'' ( EscapeSequence | ~('\'') )* '\''
- | '"'  ( EscapeSequence | ~('"') )* '"'
- ;
+  : '\'' (EscapeSequence | ~'\'')* '\''
+  | '"'  (EscapeSequence | ~'"')* '"'
+  ;
 
-EscapeSequence
-   :   '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\')
-   |   UnicodeEscape
-   |   OctalEscape
-   ;
+fragment EscapeSequence
+  : '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\')
+  | UnicodeEscape
+  | OctalEscape
+  ;
 
-fragment
-OctalEscape
-   :   '\\' ('0'..'3') ('0'..'7') ('0'..'7')
-   |   '\\' ('0'..'7') ('0'..'7')
-   |   '\\' ('0'..'7')
-   ;
+fragment OctalEscape
+  : '\\' [0-3] [0-7] [0-7]
+  | '\\' [0-7] [0-7]
+  | '\\' [0-7]
+  ;
 
-fragment
-UnicodeEscape
-   :   '\\' 'u' HexDigit HexDigit HexDigit HexDigit
-   ;
+fragment UnicodeEscape
+  : '\\' 'u' HexDigit HexDigit HexDigit HexDigit
+  ;
 
-fragment
-   HexDigit : ('0'..'9'|'a'..'f'|'A'..'F') ;
+fragment HexDigit
+  : [0-9a-fA-F]
+  ;
 
 Comment
- : ('//' ~[\r\n]* | '/*' .*? '*/' | '--' ~[\r\n]* ) -> skip
- ;
+  : ('//' ~[\r\n]* | '/*' .*? '*/' | '--' ~[\r\n]*) -> skip
+  ;
 
 Space
- : [ \t\r\n\u000C]+ -> skip
- ;
+  : [ \t\r\n\u000C]+ -> skip
+  ;
 
 fragment Int
- : '-'? [1-9] Digit* [L]*
- | '0'
- ;
+  : '-'? [1-9] Digit* [L]?
+  | '0'
+  ;
 
 fragment Digit
- : [0-9]
- ;
+  : [0-9]
+  ;
