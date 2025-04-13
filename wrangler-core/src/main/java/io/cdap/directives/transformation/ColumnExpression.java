@@ -40,6 +40,7 @@ import io.cdap.wrangler.expression.ELContext;
 import io.cdap.wrangler.expression.ELException;
 import io.cdap.wrangler.expression.ELResult;
 
+import java.util.Collections;
 import java.util.List;
 
 import static io.cdap.wrangler.metrics.JexlCategoryMetricUtils.getJexlCategoryMetric;
@@ -69,7 +70,7 @@ public class ColumnExpression implements Directive, Lineage {
   private EL el;
 
   @Override
-  public UsageDefinition define() {
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass) {
     UsageDefinition.Builder builder = UsageDefinition.builder(NAME);
     builder.define("column", TokenType.COLUMN_NAME);
     builder.define("expression", TokenType.EXPRESSION);
@@ -132,5 +133,20 @@ public class ColumnExpression implements Directive, Lineage {
   public List<EntityCountMetric> getCountMetrics() {
     EntityCountMetric jexlCategoryMetric = getJexlCategoryMetric(el.getScriptParsedText());
     return (jexlCategoryMetric == null) ? null : ImmutableList.of(jexlCategoryMetric);
+  }
+
+  @Override
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass, String s) {
+    return null;
+  }
+
+  @Override
+  public void define(UsageDefinition.Builder builder) {
+
+  }
+
+  @Override
+  public List<Row> finalize(ExecutorContext context) throws DirectiveExecutionException {
+    return Collections.emptyList();
   }
 }

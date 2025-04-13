@@ -34,6 +34,7 @@ import io.cdap.wrangler.api.parser.TokenType;
 import io.cdap.wrangler.api.parser.UsageDefinition;
 import io.cdap.wrangler.utils.ColumnConverter;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,11 +51,26 @@ public final class Rename implements Directive, Lineage {
   private ColumnName target;
 
   @Override
-  public UsageDefinition define() {
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass) {
     UsageDefinition.Builder builder = UsageDefinition.builder(NAME);
     builder.define("source", TokenType.COLUMN_NAME);
     builder.define("target", TokenType.COLUMN_NAME);
     return builder.build();
+  }
+
+  @Override
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass, String s) {
+    return null;
+  }
+
+  @Override
+  public void define(UsageDefinition.Builder builder) {
+
+  }
+
+  @Override
+  public List<Row> finalize(ExecutorContext context) throws DirectiveExecutionException {
+    return Collections.emptyList();
   }
 
   @Override

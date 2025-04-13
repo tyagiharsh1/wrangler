@@ -39,7 +39,7 @@ import io.cdap.wrangler.api.parser.Text;
 import io.cdap.wrangler.api.parser.TokenType;
 import io.cdap.wrangler.api.parser.UsageDefinition;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -50,11 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * A step to parse Excel files.
@@ -71,12 +67,27 @@ public class ParseExcel implements Directive, Lineage {
   private boolean firstRowAsHeader = false;
 
   @Override
-  public UsageDefinition define() {
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass) {
     UsageDefinition.Builder builder = UsageDefinition.builder(NAME);
     builder.define("column", TokenType.COLUMN_NAME);
     builder.define("sheet", TokenType.TEXT, Optional.TRUE);
     builder.define("first-row-as-header", TokenType.BOOLEAN, Optional.TRUE);
     return builder.build();
+  }
+
+  @Override
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass, String s) {
+    return null;
+  }
+
+  @Override
+  public void define(UsageDefinition.Builder builder) {
+
+  }
+
+  @Override
+  public List<Row> finalize(ExecutorContext context) throws DirectiveExecutionException {
+    return Collections.emptyList();
   }
 
   @Override
@@ -159,13 +170,13 @@ public class ParseExcel implements Directive, Lineage {
                   }
                 }
                 String value = "";
-                switch (cell.getCellTypeEnum()) {
+                switch (cell.getCellType()) {
                   case STRING:
                     value = cell.getStringCellValue();
                     break;
 
                   case NUMERIC:
-                    if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                    if (DateUtil.isCellDateFormatted(cell)) {
                       value = formatter.formatCellValue(cell);
                     } else {
                       value = String.valueOf(cell.getNumericCellValue());
@@ -238,7 +249,7 @@ public class ParseExcel implements Directive, Lineage {
     }
     for (int cellNum = row.getFirstCellNum(); cellNum < row.getLastCellNum(); cellNum++) {
       Cell cell = row.getCell(cellNum);
-      if (cell != null && cell.getCellTypeEnum() != CellType.BLANK && StringUtils.isNotBlank(cell.toString())) {
+      if (cell != null && cell.getCellType() != CellType.BLANK && StringUtils.isNotBlank(cell.toString())) {
         return false;
       }
     }

@@ -36,6 +36,7 @@ import io.cdap.wrangler.api.parser.UsageDefinition;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -55,12 +56,27 @@ public class RecordRegexFilter implements Directive, Lineage {
   // filter-by-regex if-matched :column 'expression'
   // filter-by-regex if-not-matched :column 'expression'
   @Override
-  public UsageDefinition define() {
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass) {
     UsageDefinition.Builder builder = UsageDefinition.builder(NAME);
     builder.define("match-type", TokenType.IDENTIFIER);
     builder.define("column", TokenType.COLUMN_NAME);
     builder.define("regex", TokenType.TEXT);
     return builder.build();
+  }
+
+  @Override
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass, String s) {
+    return null;
+  }
+
+  @Override
+  public void define(UsageDefinition.Builder builder) {
+
+  }
+
+  @Override
+  public List<Row> finalize(ExecutorContext context) throws DirectiveExecutionException {
+    return Collections.emptyList();
   }
 
   @Override

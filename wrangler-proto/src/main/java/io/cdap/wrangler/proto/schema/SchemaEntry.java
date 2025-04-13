@@ -44,7 +44,7 @@ public final class SchemaEntry extends NamespacedId {
     this.description = description;
     this.type = type;
     this.versions = versions;
-    this.specification = specification == null ? null : Bytes.toHexString(specification);
+      this.specification = (specification == null) ? null : Bytes.toHexString(specification);
     this.current = current;
   }
 

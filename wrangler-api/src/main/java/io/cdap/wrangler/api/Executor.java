@@ -18,6 +18,8 @@ package io.cdap.wrangler.api;
 
 import io.cdap.cdap.api.data.schema.Schema;
 import io.cdap.wrangler.api.annotations.PublicEvolving;
+import nl.basjes.parse.core.exceptions.InvalidDissectorException;
+import nl.basjes.parse.core.exceptions.MissingDissectorsException;
 
 import java.io.Serializable;
 import javax.annotation.Nullable;
@@ -58,7 +60,11 @@ public interface Executor<I, O> extends Serializable {
    * @throws DirectiveParseException thrown by the user in case of any issues with validation or
    * ensuring the argument values are as expected.
    */
-  void initialize(Arguments args) throws DirectiveParseException;
+  void initialize(Arguments args)
+          throws DirectiveParseException,
+          MissingDissectorsException,
+          InvalidDissectorException,
+          nl.basjes.parse.core.exceptions.MissingDissectorsException;
 
   /**
    * Executes a wrangle step on single {@link Row} and return an array of wrangled {@link Row}.
@@ -68,7 +74,7 @@ public interface Executor<I, O> extends Serializable {
    * @return Wrangled List of {@link Row}.
    */
   O execute(I rows, ExecutorContext context)
-    throws DirectiveExecutionException, ErrorRowException, ReportErrorAndProceed;
+          throws DirectiveExecutionException, ErrorRowException, ReportErrorAndProceed;
 
   /**
    * This method provides a way for the directive to de-initialize or destroy the

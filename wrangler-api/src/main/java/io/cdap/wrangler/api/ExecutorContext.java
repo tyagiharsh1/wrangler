@@ -29,6 +29,10 @@ import java.util.Map;
  */
 @PublicEvolving
 public interface ExecutorContext extends LookupProvider, Serializable {
+  Store getProperties(String s);
+
+  Store getStore(String s);
+
   /**
    * Specifies the environment in which wrangler is running.
    */
@@ -37,9 +41,9 @@ public interface ExecutorContext extends LookupProvider, Serializable {
     TRANSFORM,
     MICROSERVICE,
     TESTING
-  };
+  }
 
-  /**
+    /**
    * @return Environment this context is prepared for.
    */
   Environment getEnvironment();

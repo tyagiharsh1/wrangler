@@ -40,6 +40,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -59,12 +60,27 @@ public class ParseAsCurrency implements Directive, Lineage {
   private Locale lcl;
 
   @Override
-  public UsageDefinition define() {
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass) {
     UsageDefinition.Builder builder = UsageDefinition.builder(NAME);
     builder.define("source", TokenType.COLUMN_NAME);
     builder.define("destination", TokenType.COLUMN_NAME);
     builder.define("locale", TokenType.TEXT, Optional.TRUE);
     return builder.build();
+  }
+
+  @Override
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass, String s) {
+    return null;
+  }
+
+  @Override
+  public void define(UsageDefinition.Builder builder) {
+
+  }
+
+  @Override
+  public List<Row> finalize(ExecutorContext context) throws DirectiveExecutionException {
+    return Collections.emptyList();
   }
 
   @Override

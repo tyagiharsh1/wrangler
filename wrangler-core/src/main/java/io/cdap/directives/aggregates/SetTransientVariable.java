@@ -29,15 +29,13 @@ import io.cdap.wrangler.api.ExecutorContext;
 import io.cdap.wrangler.api.Row;
 import io.cdap.wrangler.api.TransientVariableScope;
 import io.cdap.wrangler.api.annotations.Categories;
-import io.cdap.wrangler.api.parser.Expression;
-import io.cdap.wrangler.api.parser.Identifier;
-import io.cdap.wrangler.api.parser.TokenType;
-import io.cdap.wrangler.api.parser.UsageDefinition;
+import io.cdap.wrangler.api.parser.*;
 import io.cdap.wrangler.expression.EL;
 import io.cdap.wrangler.expression.ELContext;
 import io.cdap.wrangler.expression.ELException;
 import io.cdap.wrangler.expression.ELResult;
 
+import java.util.Collections;
 import java.util.List;
 
 import static io.cdap.wrangler.metrics.JexlCategoryMetricUtils.getJexlCategoryMetric;
@@ -58,7 +56,7 @@ public class SetTransientVariable implements Directive {
   private String variable;
 
   @Override
-  public UsageDefinition define() {
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass) {
     UsageDefinition.Builder builder = UsageDefinition.builder(NAME);
     builder.define("variable", TokenType.IDENTIFIER);
     builder.define("condition", TokenType.EXPRESSION);
@@ -105,5 +103,20 @@ public class SetTransientVariable implements Directive {
   public List<EntityCountMetric> getCountMetrics() {
     EntityCountMetric jexlCategoryMetric = getJexlCategoryMetric(el.getScriptParsedText());
     return (jexlCategoryMetric == null) ? null : ImmutableList.of(jexlCategoryMetric);
+  }
+
+  @Override
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass, String s) {
+    return null;
+  }
+
+  @Override
+  public void define(UsageDefinition.Builder builder) {
+
+  }
+
+  @Override
+  public List<Row> finalize(ExecutorContext context) throws DirectiveExecutionException {
+    return Collections.emptyList();
   }
 }

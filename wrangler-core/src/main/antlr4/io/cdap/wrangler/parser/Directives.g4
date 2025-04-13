@@ -8,245 +8,99 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
 grammar Directives;
 
-options {
-  language = Java;
-}
-
-@lexer::header {
-  // Licensing header preserved
-}
-
-// === PARSER RULES ===
-
-recipe
-  : statements EOF
+// Entry point of the parser
+parse
+  : statement+ EOF
   ;
 
-statements
-  : (Comment | macro | directive SColon | pragma SColon | ifStatement)*
+// Statement can be a directive, an if statement, or a pragma directive
+statement
+  : directive ';'                    // Directives followed by semicolons
+  | ifStatement                       // If statements
+  | pragmaDirective                   // Pragma directives
   ;
 
+// A pragma directive definition (e.g., #pragma)
+pragmaDirective
+  : PRAGMA ID (',' ID)* ';'
+  ;
+
+// A general directive (e.g., 'load-directives', 'parse-as-bytes', etc.)
 directive
-  : command (
-
-      codeblock
-    | identifier
-    | macro
-    | text
-    | number
-    | bool
-    | column
-    | colList
-    | numberList
-    | boolList
-    | stringList
-    | numberRanges
-    | properties
-    | byteSizeArg
-    | timeDurationArg
-  )*
+  : ID (expr (',' expr)*)?            // Directive name followed by optional expressions
   ;
 
+// If statement handling
 ifStatement
-  : 'if' expression '{' statements ( '}' 'else' 'if' expression '{' statements )* ( '}' 'else' '{' statements )? '}'
+  : 'if' '(' expr ')' '{' statement+ '}'
   ;
 
-expression
-  : '(' (~')')* ')'
+// Expression handling (various possible values)
+expr
+  : ID                               // Variable or identifier
+  | STRING                           // String literal
+  | NUMBER                           // Number literal
+  | BYTE_SIZE                        // Byte size literal
+  | TIME_DURATION                    // Time duration literal
+  | macro                            // Macro expansion
+  | predicate                        // Predicate expression
+  | expr binOp expr                  // Binary expressions (e.g., comparisons)
+  | '(' expr ')'                     // Parenthesized expressions
   ;
 
+// Predicate expression (conditional logic)
+predicate
+  : 'exp' ':' '{' expr '}'
+  ;
+
+// Macro expansion (e.g., ${var_name})
 macro
-  : Dollar OBrace (~'}')* CBrace
+  : '${' ID ('_' ID)? '}'
   ;
 
-pragma
-  : '#pragma' (pragmaLoadDirective | pragmaVersion)
+// Binary operators for expressions
+binOp
+  : '&&'
+  | '||'
+  | '=='
+  | '!='
+  | '<'
+  | '<='
+  | '>'
+  | '>='
+  | '=~'
   ;
 
-pragmaLoadDirective
-  : 'load-directives' identifierList
-  ;
+// Token Definitions
+ID: ':'? [a-zA-Z_][a-zA-Z_0-9]* ;
 
-pragmaVersion
-  : 'version' Number
-  ;
+NUMBER: [0-9]+ ('.' [0-9]+)? ;
 
-codeblock
-  : 'exp' Space* ':' condition
-  ;
+BYTE_SIZE: [0-9]+ ('.' [0-9]+)? BYTE_UNIT ;
 
-condition
-  : OBrace (~CBrace | condition)* CBrace
-  ;
+TIME_DURATION: [0-9]+ ('.' [0-9]+)? TIME_UNIT ;
 
-identifier
-  : Identifier
-  ;
+// Byte unit options (e.g., kB, MB, GB, b)
+fragment BYTE_UNIT: [kK][bB] | [mM][bB] | [gG][bB] | [bB] ;
 
-properties
-  : 'prop' ':' OBrace propertyList CBrace
-  ;
+// Time unit options (e.g., ms, sec, min, etc.)
+fragment TIME_UNIT: 'ms' | 's' | 'sec' | 'm' | 'min' | 'h' | 'hr' | 'd' | 'day' ;
 
-propertyList
-  : property (',' property)*
-  ;
+// Pragmas start with '#pragma'
+PRAGMA: '#pragma' ;
 
-property
-  : Identifier '=' (text | number | bool)
-  ;
+// Strings enclosed in single quotes
+STRING: '\'' (~['\\] | '\\' .)* '\'' ;
 
-numberRanges
-  : numberRange (',' numberRange)*
-  ;
+// Single-line comments (ignored by parser)
+COMMENT: '#' ~[\r\n]* -> skip ;
 
-numberRange
-  : Number ':' Number '=' value
-  ;
+// Whitespace (ignored by parser)
+WS: [ \t\r\n]+ -> skip ;
 
-value
-  : String | Number | Column | Bool | BYTE_SIZE | TIME_DURATION
-  ;
-
-byteSizeArg
-  : BYTE_SIZE
-  ;
-
-timeDurationArg
-  : TIME_DURATION
-  ;
-
-column
-  : Column
-  ;
-
-text
-  : String
-  ;
-
-number
-  : Number
-  ;
-
-bool
-  : Bool
-  ;
-
-colList
-  : Column (',' Column)+
-  ;
-
-numberList
-  : Number (',' Number)+
-  ;
-
-boolList
-  : Bool (',' Bool)+
-  ;
-
-stringList
-  : String (',' String)+
-  ;
-
-identifierList
-  : Identifier (',' Identifier)*
-  ;
-
-command
-  : Identifier
-  ;
-
-// === LEXER RULES ===
-
-OBrace   : '{';
-CBrace   : '}';
-SColon   : ';';
-Dollar   : '$';
-Colon    : ':';
-Comma    : ',';
-
-Bool
-  : 'true'
-  | 'false'
-  ;
-
-BYTE_SIZE
-  : Int ('.' Digit*)? BYTE_UNIT
-  ;
-
-TIME_DURATION
-  : Int ('.' Digit*)? TIME_UNIT
-  ;
-
-fragment BYTE_UNIT
-  : 'B' | 'KB' | 'MB' | 'GB' | 'TB' | 'kb' | 'mb' | 'gb' | 'tb'
-  ;
-
-fragment TIME_UNIT
-  : 'ms' | 's' | 'sec' | 'seconds' | 'm' | 'min' | 'minutes'
-  ;
-
-Number
-  : Int ('.' Digit*)?
-  ;
-
-Identifier
-  : [a-zA-Z_\-] [a-zA-Z_0-9\-]*
-  ;
-
-Macro
-  : [a-zA-Z_] [a-zA-Z_0-9]*
-  ;
-
-Column
-  : ':' [a-zA-Z_\-] [:a-zA-Z_0-9\-]*
-  ;
-
-String
-  : '\'' (EscapeSequence | ~'\'')* '\''
-  | '"'  (EscapeSequence | ~'"')* '"'
-  ;
-
-fragment EscapeSequence
-  : '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\')
-  | UnicodeEscape
-  | OctalEscape
-  ;
-
-fragment OctalEscape
-  : '\\' [0-3] [0-7] [0-7]
-  | '\\' [0-7] [0-7]
-  | '\\' [0-7]
-  ;
-
-fragment UnicodeEscape
-  : '\\' 'u' HexDigit HexDigit HexDigit HexDigit
-  ;
-
-fragment HexDigit
-  : [0-9a-fA-F]
-  ;
-
-Comment
-  : ('//' ~[\r\n]* | '/*' .*? '*/' | '--' ~[\r\n]*) -> skip
-  ;
-
-Space
-  : [ \t\r\n\u000C]+ -> skip
-  ;
-
-fragment Int
-  : '-'? [1-9] Digit* [L]?
-  | '0'
-  ;
-
-fragment Digit
-  : [0-9]
-  ;

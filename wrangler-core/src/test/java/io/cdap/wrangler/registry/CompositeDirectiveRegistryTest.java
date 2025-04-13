@@ -23,10 +23,7 @@ import io.cdap.cdap.api.artifact.ArtifactId;
 import io.cdap.cdap.api.artifact.ArtifactScope;
 import io.cdap.cdap.api.artifact.ArtifactSummary;
 import io.cdap.cdap.api.artifact.ArtifactVersion;
-import io.cdap.wrangler.api.Arguments;
-import io.cdap.wrangler.api.Directive;
-import io.cdap.wrangler.api.ExecutorContext;
-import io.cdap.wrangler.api.Row;
+import io.cdap.wrangler.api.*;
 import io.cdap.wrangler.api.parser.ColumnName;
 import io.cdap.wrangler.api.parser.TokenType;
 import io.cdap.wrangler.api.parser.UsageDefinition;
@@ -34,10 +31,7 @@ import io.cdap.wrangler.proto.Contexts;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.annotation.Nullable;
 
 /**
@@ -57,10 +51,25 @@ public class CompositeDirectiveRegistryTest {
     }
 
     @Override
-    public UsageDefinition define() {
+    public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass) {
       UsageDefinition.Builder builder = UsageDefinition.builder("my-test");
       builder.define("column", TokenType.COLUMN_NAME);
       return builder.build();
+    }
+
+    @Override
+    public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass, String s) {
+      return null;
+    }
+
+    @Override
+    public void define(UsageDefinition.Builder builder) {
+
+    }
+
+    @Override
+    public List<Row> finalize(ExecutorContext context) throws DirectiveExecutionException {
+      return Collections.emptyList();
     }
 
     @Override

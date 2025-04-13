@@ -39,6 +39,7 @@ import io.cdap.wrangler.utils.ColumnConverter;
 import org.apache.avro.Schema;
 
 import java.math.RoundingMode;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +75,7 @@ public class DataModelMapColumn implements Directive, Lineage {
   }
 
   @Override
-  public UsageDefinition define() {
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass) {
     UsageDefinition.Builder builder = UsageDefinition.builder(NAME);
     builder.define(DATA_MODEL_URL, TokenType.TEXT);
     builder.define(DATA_MODEL, TokenType.TEXT);
@@ -83,6 +84,21 @@ public class DataModelMapColumn implements Directive, Lineage {
     builder.define(TARGET_FIELD, TokenType.TEXT);
     builder.define(COLUMN, TokenType.COLUMN_NAME);
     return builder.build();
+  }
+
+  @Override
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass, String s) {
+    return null;
+  }
+
+  @Override
+  public void define(UsageDefinition.Builder builder) {
+
+  }
+
+  @Override
+  public List<Row> finalize(ExecutorContext context) throws DirectiveExecutionException {
+    return Collections.emptyList();
   }
 
   @Override

@@ -25,6 +25,7 @@ import io.cdap.wrangler.api.DirectiveNotFoundException;
 import io.cdap.wrangler.api.DirectiveParseException;
 import io.cdap.wrangler.api.RecipeException;
 import io.cdap.wrangler.api.RecipeParser;
+import io.cdap.wrangler.api.parser.ColumnName;
 import io.cdap.wrangler.api.parser.UsageDefinition;
 import io.cdap.wrangler.registry.DirectiveInfo;
 import io.cdap.wrangler.registry.DirectiveRegistry;
@@ -83,7 +84,7 @@ public class GrammarBasedParser implements RecipeParser {
 
         try {
           Directive directive = info.instance();
-          UsageDefinition definition = directive.define();
+          UsageDefinition definition = directive.define("size_col", ColumnName.class);
           Arguments arguments = new MapArguments(definition, tokenGroup);
           directive.initialize(arguments);
           result.add(directive);

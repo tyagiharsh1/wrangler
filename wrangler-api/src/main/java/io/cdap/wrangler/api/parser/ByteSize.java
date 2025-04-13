@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-
-
-
 package io.cdap.wrangler.api.parser;
 
 import com.google.gson.JsonElement;
@@ -37,10 +34,20 @@ public class ByteSize implements Token {
     private long parseBytes(String input) {
         String lower = input.trim().toLowerCase();
         double number = Double.parseDouble(lower.replaceAll("[a-zA-Z]+", ""));
-        if (lower.endsWith("kb")) return (long) (number * 1024);
-        if (lower.endsWith("mb")) return (long) (number * 1024 * 1024);
-        if (lower.endsWith("gb")) return (long) (number * 1024 * 1024 * 1024);
-        if (lower.endsWith("b")) return (long) number;
+
+        if (lower.endsWith("kb")) {
+            return (long) (number * 1024);
+        }
+        if (lower.endsWith("mb")) {
+            return (long) (number * 1024 * 1024);
+        }
+        if (lower.endsWith("gb")) {
+            return (long) (number * 1024 * 1024 * 1024);
+        }
+        if (lower.endsWith("b")) {
+            return (long) number;
+        }
+
         throw new IllegalArgumentException("Unsupported byte unit: " + input);
     }
 

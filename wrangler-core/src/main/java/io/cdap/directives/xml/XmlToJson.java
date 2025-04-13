@@ -42,6 +42,7 @@ import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 import org.json.XML;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -61,12 +62,27 @@ public class XmlToJson implements Directive, Lineage {
   private final Gson gson = new Gson();
 
   @Override
-  public UsageDefinition define() {
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass) {
     UsageDefinition.Builder builder = UsageDefinition.builder(NAME);
     builder.define("column", TokenType.COLUMN_NAME);
     builder.define("depth", TokenType.NUMERIC, Optional.TRUE);
     builder.define(ARG_KEEP_STRING, TokenType.BOOLEAN, Optional.TRUE);
     return builder.build();
+  }
+
+  @Override
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass, String s) {
+    return null;
+  }
+
+  @Override
+  public void define(UsageDefinition.Builder builder) {
+
+  }
+
+  @Override
+  public List<Row> finalize(ExecutorContext context) throws DirectiveExecutionException {
+    return Collections.emptyList();
   }
 
   @Override

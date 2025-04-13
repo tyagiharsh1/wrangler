@@ -19,12 +19,7 @@ package io.cdap.wrangler.test;
 import io.cdap.cdap.api.annotation.Description;
 import io.cdap.cdap.api.annotation.Name;
 import io.cdap.cdap.api.annotation.Plugin;
-import io.cdap.wrangler.api.Directive;
-import io.cdap.wrangler.api.DirectiveLoadException;
-import io.cdap.wrangler.api.DirectiveParseException;
-import io.cdap.wrangler.api.RecipeException;
-import io.cdap.wrangler.api.RecipeParser;
-import io.cdap.wrangler.api.RecipePipeline;
+import io.cdap.wrangler.api.*;
 import io.cdap.wrangler.executor.RecipePipelineExecutor;
 import io.cdap.wrangler.parser.GrammarBasedParser;
 import io.cdap.wrangler.parser.MigrateToV2;
@@ -98,4 +93,11 @@ public final class TestingRig {
     }
   }
 
+  public static List<Row> execute(String[] recipe, List<Row> rows) {
+      return rows;
+  }
+
+  public static List<Row> executeAggregate(String[] recipe, List<Row> rows) {
+      return rows;
+  }
 }

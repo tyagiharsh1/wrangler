@@ -19,10 +19,7 @@ package io.cdap.directives.aggregates;
 import io.cdap.cdap.etl.api.Lookup;
 import io.cdap.cdap.etl.api.StageMetrics;
 import io.cdap.wrangler.TestingRig;
-import io.cdap.wrangler.api.ExecutorContext;
-import io.cdap.wrangler.api.Row;
-import io.cdap.wrangler.api.TransientStore;
-import io.cdap.wrangler.api.TransientVariableScope;
+import io.cdap.wrangler.api.*;
 import io.cdap.wrangler.proto.Contexts;
 import org.junit.Assert;
 import org.junit.Test;
@@ -51,6 +48,16 @@ public class SetTransientVariableTest {
 
     final Map<String, Object> s = new HashMap<>();
     rows = TestingRig.execute(recipe, rows, new ExecutorContext() {
+      @Override
+      public Store getProperties(String s) {
+        return null;
+      }
+
+      @Override
+      public Store getStore(String s) {
+        return null;
+      }
+
       @Override
       public Environment getEnvironment() {
         return Environment.TESTING;

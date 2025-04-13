@@ -17,6 +17,7 @@
 package io.cdap.wrangler.api;
 
 import io.cdap.wrangler.api.annotations.PublicEvolving;
+import io.cdap.wrangler.api.parser.TokenType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -260,4 +261,8 @@ public final class Row implements Serializable {
   public int hashCode() {
     return Objects.hash(columns, values);
   }
+
+    public Row add(String targetTimeCol, TokenType tokenType, String s, boolean b) {
+        return null;
+    }
 }

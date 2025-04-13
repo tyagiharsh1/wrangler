@@ -44,10 +44,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A CSV Parser Stage for parsing the {@link Row} provided based on configuration.
@@ -75,12 +72,27 @@ public class CsvParser implements Directive, Lineage {
   private List<String> headers = new ArrayList<>();
 
   @Override
-  public UsageDefinition define() {
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass) {
     UsageDefinition.Builder builder = UsageDefinition.builder("parse-as-csv");
     builder.define("col", TokenType.COLUMN_NAME);
     builder.define("delimiter", TokenType.TEXT, Optional.TRUE);
     builder.define("header", TokenType.BOOLEAN, Optional.TRUE);
     return builder.build();
+  }
+
+  @Override
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass, String s) {
+    return null;
+  }
+
+  @Override
+  public void define(UsageDefinition.Builder builder) {
+
+  }
+
+  @Override
+  public List<Row> finalize(ExecutorContext context) throws DirectiveExecutionException {
+    return Collections.emptyList();
   }
 
   @Override

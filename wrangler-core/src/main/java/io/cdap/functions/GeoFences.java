@@ -91,7 +91,7 @@ public final class GeoFences {
     Polygon polygon = (Polygon) feature.geometry();
     List<SinglePosition> positions = Lists.newArrayList(polygon.perimeter().positions().children());
 
-    if ((positions == null) || (location == null)) {
+    if (location == null) {
       return false;
     }
 

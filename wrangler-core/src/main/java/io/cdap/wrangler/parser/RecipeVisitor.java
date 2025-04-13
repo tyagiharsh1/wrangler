@@ -34,10 +34,12 @@ import io.cdap.wrangler.api.parser.Ranges;
 import io.cdap.wrangler.api.parser.Text;
 import io.cdap.wrangler.api.parser.TextList;
 import io.cdap.wrangler.api.parser.Token;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import io.cdap.wrangler.parser.DirectivesBaseVisitor;
+import io.cdap.wrangler.parser.DirectivesParser;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -230,7 +232,7 @@ public final class RecipeVisitor extends DirectivesBaseVisitor<RecipeSymbol.Buil
     return builder;
   }
 
-  private SourceInfo getOriginalSource(ParserRuleContext ctx) {
+  private SourceInfo getOriginalSource(DirectivesParser.DirectiveContext ctx) {
     int a = ctx.getStart().getStartIndex();
     int b = ctx.getStop().getStopIndex();
     Interval interval = new Interval(a, b);

@@ -34,8 +34,11 @@ import io.cdap.wrangler.api.parser.Text;
 import io.cdap.wrangler.api.parser.TokenType;
 import io.cdap.wrangler.api.parser.UsageDefinition;
 import nl.basjes.parse.core.Parser;
+import nl.basjes.parse.core.exceptions.InvalidDissectorException;
+import nl.basjes.parse.core.exceptions.MissingDissectorsException;
 import nl.basjes.parse.httpdlog.ApacheHttpdLoglineParser;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -53,7 +56,7 @@ public class ParseLog implements Directive, Lineage {
   private Parser<Object> parser;
 
   @Override
-  public UsageDefinition define() {
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass) {
     UsageDefinition.Builder builder = UsageDefinition.builder(NAME);
     builder.define("column", TokenType.COLUMN_NAME);
     builder.define("format", TokenType.TEXT);
@@ -61,7 +64,22 @@ public class ParseLog implements Directive, Lineage {
   }
 
   @Override
-  public void initialize(Arguments args) throws DirectiveParseException {
+  public UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass, String s) {
+    return null;
+  }
+
+  @Override
+  public void define(UsageDefinition.Builder builder) {
+
+  }
+
+  @Override
+  public List<Row> finalize(ExecutorContext context) throws DirectiveExecutionException {
+    return Collections.emptyList();
+  }
+
+  @Override
+  public void initialize(Arguments args) throws DirectiveParseException, MissingDissectorsException, InvalidDissectorException {
     this.column = ((ColumnName) args.value("column")).value();
     this.format = ((Text) args.value("format")).value();
     this.parser = new ApacheHttpdLoglineParser<>(Object.class, format);

@@ -21,6 +21,7 @@ import io.cdap.cdap.etl.api.StageMetrics;
 import io.cdap.directives.aggregates.DefaultTransientStore;
 import io.cdap.wrangler.api.Executor;
 import io.cdap.wrangler.api.ExecutorContext;
+import io.cdap.wrangler.api.Store;
 import io.cdap.wrangler.api.TransientStore;
 import io.cdap.wrangler.proto.Contexts;
 import org.mockito.Mockito;
@@ -49,6 +50,16 @@ public class TestingPipelineContext implements ExecutorContext {
     Mockito.doNothing().when(metrics).count(Mockito.anyString(), Mockito.anyInt());
 
     schemaManagementEnabled = false;
+  }
+
+  @Override
+  public Store getProperties(String s) {
+    return null;
+  }
+
+  @Override
+  public Store getStore(String s) {
+    return null;
   }
 
   /**

@@ -21,6 +21,7 @@ import io.cdap.cdap.api.annotation.Name;
 import io.cdap.cdap.api.artifact.ArtifactId;
 import io.cdap.wrangler.api.Directive;
 import io.cdap.wrangler.api.annotations.Categories;
+import io.cdap.wrangler.api.parser.ColumnName;
 import io.cdap.wrangler.api.parser.UsageDefinition;
 import io.cdap.wrangler.parser.DirectiveClass;
 
@@ -156,7 +157,7 @@ public final class DirectiveInfo {
         return definition;
       }
       try {
-        definition = instance().define();
+        definition = instance().define("size_col", ColumnName.class);
       } catch (IllegalAccessException | InstantiationException e) {
         throw new IllegalStateException(e);
       }

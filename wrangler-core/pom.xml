@@ -1,41 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright © 2017-2019 Cask Data, Inc.
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License"); you may not
-  ~ use this file except in compliance with the License. You may obtain a copy of
-  ~ the License at
-  ~
+  ~ Licensed under the Apache License, Version 2.0
   ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-  ~ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-  ~ License for the specific language governing permissions and limitations under
-  ~ the License.
-  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <parent>
     <artifactId>wrangler</artifactId>
     <groupId>io.cdap.wrangler</groupId>
     <version>4.12.0-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
 
+  <modelVersion>4.0.0</modelVersion>
   <artifactId>wrangler-core</artifactId>
   <name>Wrangler Core</name>
+
+  <properties>
+    <java.version>1.8</java.version>
+    <guava.version>31.1-jre</guava.version>
+    <protobuf.version>3.21.7</protobuf.version>
+    <cdap.version>6.9.0</cdap.version>
+    <chlorine.version>1.0.4</chlorine.version>
+    <simmetrics.version>4.1.1</simmetrics.version>
+    <commons-io.version>2.11.0</commons-io.version>
+    <geogson.version>1.4.0</geogson.version>
+    <commons.validator.version>1.7</commons.validator.version>
+    <netty.version>4.1.68.Final</netty.version>
+    <netty-http.version>0.10.6</netty-http.version>
+    <natty.version>0.13</natty.version>
+    <httpdlog-parser.version>2.0</httpdlog-parser.version>
+    <joda-time.version>2.10.13</joda-time.version>
+    <guava.retrying.version>2.0.0</guava.retrying.version>
+    <antlr4.version>4.9.2</antlr4.version>
+    <antlr4-maven-plugin.version>4.5</antlr4-maven-plugin.version>
+    <json-path.version>2.7.0</json-path.version>
+    <unix4j.version>0.1</unix4j.version>
+    <reflections.version>0.9.12</reflections.version>
+    <poi.version>5.2.3</poi.version>
+    <commons-lang3.version>3.12.0</commons-lang3.version>
+    <commons-jexl.version>3.2</commons-jexl.version>
+    <httpclient.version>4.5.13</httpclient.version>
+    <commons-csv.version>1.9.0</commons-csv.version>
+    <avro.version>1.11.1</avro.version>
+    <bouncycastle.version>1.70</bouncycastle.version>
+    <commons-math3.version>3.6.1</commons-math3.version>
+    <hl7.version>2.3</hl7.version>
+  </properties>
 
   <repositories>
     <repository>
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
     </repository>
+    <!-- Additional repository for Chlorine and GeoJSON -->
+    <repository>
+      <id>sonatype-oss</id>
+      <url>https://oss.sonatype.org/content/repositories/releases</url>
+    </repository>
+    <repository>
+      <id>maven-central</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
   </repositories>
 
   <dependencies>
-
-    <!-- Internal -->
-
+    <!-- Internal Dependencies -->
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
@@ -69,8 +102,7 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Test -->
-
+    <!-- Test Dependencies -->
     <dependency>
       <groupId>io.cdap.cdap</groupId>
       <artifactId>cdap-unit-test</artifactId>
@@ -106,18 +138,17 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- External -->
-
+    <!-- External Dependencies -->
     <dependency>
       <groupId>com.github.everit-org.json-schema</groupId>
       <artifactId>org.everit.json.schema</artifactId>
       <version>1.11.1</version>
     </dependency>
-    <dependency>
-      <groupId>io.dataapps.chlorine</groupId>
-      <artifactId>chlorine-finder</artifactId>
-      <version>${chlorine.version}</version>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>io.dataapps.chlorine</groupId>-->
+<!--      <artifactId>chlorine-finder</artifactId>-->
+<!--      <version>${chlorine.version}</version>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>com.github.mpkorstanje</groupId>
       <artifactId>simmetrics-core</artifactId>
@@ -128,11 +159,12 @@
       <artifactId>commons-io</artifactId>
       <version>${commons-io.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.github.filosganga</groupId>
-      <artifactId>geogson-core</artifactId>
-      <version>${geogson.version}</version>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>com.github.filosganga</groupId>-->
+<!--      <artifactId>geogson</artifactId>-->
+<!--      <version>1.4.0</version>-->
+<!--    </dependency>-->
+
     <dependency>
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
@@ -144,12 +176,12 @@
       <version>${netty.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>io.cdap.http</groupId>
-      <artifactId>netty-http</artifactId>
-      <version>${netty-http.version}</version>
-      <scope>test</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>io.cdap.http</groupId>-->
+<!--      <artifactId>netty-http</artifactId>-->
+<!--      <version>${netty-http.version}</version>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>com.joestelmach</groupId>
       <artifactId>natty</artifactId>
@@ -179,7 +211,6 @@
       <groupId>org.antlr</groupId>
       <artifactId>antlr4</artifactId>
       <version>${antlr4.version}</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.json</groupId>
@@ -188,9 +219,10 @@
     </dependency>
     <dependency>
       <groupId>org.unix4j</groupId>
-      <artifactId>unix4j-command</artifactId>
-      <version>${unix4j.version}</version>
+      <artifactId>unix4j-base</artifactId>
+      <version>0.4</version>
     </dependency>
+
     <dependency>
       <groupId>com.jayway.jsonpath</groupId>
       <artifactId>json-path</artifactId>
@@ -201,9 +233,6 @@
       <artifactId>reflections</artifactId>
       <version>${reflections.version}</version>
     </dependency>
-
-    <!-- Apache -->
-
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
@@ -256,37 +285,10 @@
       <version>${commons-math3.version}</version>
     </dependency>
 
-    <!-- UHN -->
-
+    <!-- HL7 / UHN -->
     <dependency>
       <groupId>ca.uhn.hapi</groupId>
       <artifactId>hapi-base</artifactId>
-      <version>${hl7.version}</version>
-    </dependency>
-    <!-- These are structure JARs for HL7 v2.1 and 2.5.1 (as an example) -->
-    <dependency>
-      <groupId>ca.uhn.hapi</groupId>
-      <artifactId>hapi-structures-v21</artifactId>
-      <version>${hl7.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>ca.uhn.hapi</groupId>
-      <artifactId>hapi-structures-v22</artifactId>
-      <version>${hl7.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>ca.uhn.hapi</groupId>
-      <artifactId>hapi-structures-v23</artifactId>
-      <version>${hl7.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>ca.uhn.hapi</groupId>
-      <artifactId>hapi-structures-v231</artifactId>
-      <version>${hl7.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>ca.uhn.hapi</groupId>
-      <artifactId>hapi-structures-v24</artifactId>
       <version>${hl7.version}</version>
     </dependency>
     <dependency>
@@ -294,39 +296,73 @@
       <artifactId>hapi-structures-v25</artifactId>
       <version>${hl7.version}</version>
     </dependency>
-    <dependency>
-      <groupId>ca.uhn.hapi</groupId>
-      <artifactId>hapi-structures-v251</artifactId>
-      <version>${hl7.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>ca.uhn.hapi</groupId>
-      <artifactId>hapi-structures-v26</artifactId>
-      <version>${hl7.version}</version>
-    </dependency>
+
     <dependency>
       <groupId>io.cdap.cdap</groupId>
       <artifactId>cdap-system-app-api</artifactId>
       <version>${cdap.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty.orbit</groupId>
+      <artifactId>javax.mail.glassfish</artifactId>
+      <version>1.4.1.v201005082020</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.dataapps.chlorine</groupId>
+      <artifactId>chlorine-finder</artifactId>
+      <version>1.1.5</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.dataapps.chlorine</groupId>
+      <artifactId>chlorine-finder</artifactId>
+      <version>1.1.5</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.filosganga</groupId>
+      <artifactId>geogson-core</artifactId>
+      <version>1.1.97</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.filosganga</groupId>
+      <artifactId>geogson-core</artifactId>
+      <version>1.1.97</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.dataapps.chlorine</groupId>
+      <artifactId>chlorine-finder</artifactId>
+      <version>1.1.5</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.unix4j</groupId>
+      <artifactId>unix4j-command</artifactId>
+      <version>0.4</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>5.2.3</version>
+      <scope>compile</scope>
+    </dependency>
+      <dependency>
+          <groupId>io.cdap.wrangler</groupId>
+          <artifactId>wrangler-test</artifactId>
+          <version>4.12.0-SNAPSHOT</version>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
-
-
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-maven-plugin</artifactId>
-        <version>${antlr4-maven-plugin.version}</version>
-        <configuration>
-          <visitor>true</visitor>
-        </configuration>
+        <version>4.9.2</version>
         <executions>
           <execution>
             <goals>
@@ -334,28 +370,9 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <version>1.0</version>
-        <executions>
-          <execution>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
         <configuration>
-          <doCheck>true</doCheck>
-          <doUpdate>false</doUpdate>
-          <revisionOnScmFailure>false</revisionOnScmFailure>
-          <format>{0,date,yyyy-MM-dd-HH:mm:ss}_{1}</format>
-          <items>
-            <item>timestamp</item>
-            <item>${user.name}</item>
-          </items>
+          <visitor>true</visitor>
+          <listener>false</listener>
         </configuration>
       </plugin>
     </plugins>

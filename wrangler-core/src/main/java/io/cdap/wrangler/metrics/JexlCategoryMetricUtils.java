@@ -22,6 +22,7 @@ import org.apache.commons.jexl3.parser.ParserTokenManager;
 import org.apache.commons.jexl3.parser.SimpleCharStream;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -57,7 +58,7 @@ public final class JexlCategoryMetricUtils {
 
   private static String parseJexlCategory(String script) {
     ParserTokenManager manager = new ParserTokenManager(
-      new SimpleCharStream(new ByteArrayInputStream(script.getBytes())));
+      new SimpleCharStream(new java.io.InputStreamReader(new ByteArrayInputStream(script.getBytes()))));
     return manager.getNextToken().toString();
   }
 }

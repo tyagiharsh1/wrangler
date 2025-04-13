@@ -16,6 +16,7 @@
 
 package io.cdap.wrangler.api;
 
+import io.cdap.wrangler.api.parser.ColumnName;
 import io.cdap.wrangler.api.parser.UsageDefinition;
 
 import java.util.List;
@@ -114,7 +115,7 @@ public interface Directive extends Executor<List<Row>, List<Row>>, EntityMetrics
    *
    * @see io.cdap.wrangler.api.parser.TokenType
    */
-  UsageDefinition define();
+  UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass);
 
   /**
    * This method provides a way to emit metrics from the Directive. Metadata about each metric to be emitted can be
@@ -126,4 +127,10 @@ public interface Directive extends Executor<List<Row>, List<Row>>, EntityMetrics
     // no op
     return null;
   }
+
+  UsageDefinition define(String sizeCol, Class<ColumnName> columnNameClass, String s);
+
+  void define(UsageDefinition.Builder builder);
+
+  List<Row> finalize(ExecutorContext context) throws DirectiveExecutionException;
 }

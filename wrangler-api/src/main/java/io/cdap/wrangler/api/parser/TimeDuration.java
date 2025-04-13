@@ -1,68 +1,97 @@
-/*
- * Copyright © 2017-2019 Cask Data, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.cdap.wrangler.api.parser;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Token implementation for representing time durations like "500ms", "2s", "3min", etc.
+ * Parser for time duration strings (e.g., "500ms", "2.1s", "3min", "1h").
  */
 public class TimeDuration implements Token {
+    private static final Pattern TIME_PATTERN =
+            Pattern.compile("(?i)^([0-9]*\\.?[0-9]+)(ms|s|sec|secs|m|min|mins|h|hr|hrs|hour|hours)$");
+
     private final long millis;
-    private final String original;
+    private final String value;
 
-    public TimeDuration(String value) {
-        this.original = value;
-        this.millis = parseMillis(value);
+    /**
+     * Constructs a TimeDuration from the given string.
+     *
+     * @param input the time duration string (e.g. "2.5s", "1min")
+     * @throws IllegalArgumentException if the input is null or not a valid time duration
+     */
+    public TimeDuration(String input) {
+        if (input == null) {
+            throw new IllegalArgumentException("Time duration string cannot be null");
+        }
+
+        this.value = input.trim();
+
+        Matcher matcher = TIME_PATTERN.matcher(this.value);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Invalid time duration format: " + input);
+        }
+
+        double quantity = Double.parseDouble(matcher.group(1));
+        String unit = matcher.group(2).toLowerCase();
+
+        switch (unit) {
+            case "ms":
+                millis = (long) quantity;
+                break;
+            case "s":
+            case "sec":
+            case "secs":
+                millis = (long) (quantity * 1000);
+                break;
+            case "m":
+            case "min":
+            case "mins":
+                millis = (long) (quantity * 60 * 1000);
+                break;
+            case "h":
+            case "hr":
+            case "hrs":
+            case "hour":
+            case "hours":
+                millis = (long) (quantity * 60 * 60 * 1000);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported time unit: " + unit);
+        }
     }
 
-    private long parseMillis(String input) {
-        String lower = input.trim().toLowerCase();
-
-        double number = Double.parseDouble(lower.replaceAll("[a-z]+", ""));
-
-        if (lower.endsWith("ms")) return (long) number;
-        if (lower.endsWith("s") || lower.endsWith("sec") || lower.endsWith("seconds")) return (long) (number * 1000);
-        if (lower.endsWith("m") || lower.endsWith("min") || lower.endsWith("minutes")) return (long) (number * 60 * 1000);
-        if (lower.endsWith("h")) return (long) (number * 60 * 60 * 1000);
-
-        throw new IllegalArgumentException("Unsupported time unit: " + input);
-    }
-
+    /**
+     * Returns the time duration in milliseconds.
+     */
     public long getMillis() {
         return millis;
     }
 
+    /**
+     * Returns the original input string.
+     */
     @Override
-    public Object value() {
-        return millis;
+    public String value() {
+        return value;
     }
 
     @Override
     public TokenType type() {
-        return TokenType.TIME_DURATION;
+        return null;
     }
 
     @Override
     public JsonElement toJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("original", original);
-        json.addProperty("milliseconds", millis);
-        return json;
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "TimeDuration{" +
+                "millis=" + millis +
+                ", value='" + value + '\'' +
+                '}';
     }
 }

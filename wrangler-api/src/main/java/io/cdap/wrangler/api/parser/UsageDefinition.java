@@ -16,7 +16,9 @@
 
 package io.cdap.wrangler.api.parser;
 
+import io.cdap.wrangler.api.Directive;
 import io.cdap.wrangler.api.Optional;
+import io.cdap.wrangler.api.Row;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,12 +26,12 @@ import java.util.List;
 
 /**
  * This class {@link UsageDefinition} provides a way for users to registers the argument for UDDs.
- *
+ * <p>
  * {@link UsageDefinition} is a collection of {@link TokenDefinition} and the name of the directive
  * itself. Each token specification has an associated ordinal that can be used to position the argument
  * within the directive.
- *
- * Following is a example of how this class can be used.
+ * <p>
+ * Following is an example of how this class can be used.
  * <code>
  *   UsageDefinition.Builder builder = UsageDefinition.builder();
  *   builder.add("col1", TypeToken.COLUMN_NAME); // By default, this field is required.
@@ -37,7 +39,7 @@ import java.util.List;
  *   builder.add("expression", TypeToken.EXPRESSION);
  *   UsageDefinition definition = builder.build();
  * </code>
- *
+ * <p>
  * NOTE: No constraints checks are included in this implementation.
  *
  * @see TokenDefinition
@@ -54,7 +56,11 @@ public final class UsageDefinition implements Serializable {
     this.optionalCnt = optionalCnt;
   }
 
-  /**
+  public static Directive builder() {
+    return null;
+  }
+
+    /**
    * Returns the name of the directive for which the this <code>UsageDefinition</code>
    * object is created.
    *
@@ -144,7 +150,7 @@ public final class UsageDefinition implements Serializable {
 
   /**
    * This is a static method for creating a builder for the <code>UsageDefinition</code>
-   * object. In order to create a <code>UsageDefinition</code>, a builder has to created.
+   * object. In order to create a <code>UsageDefinition</code>, a builder has to create.
    *
    * <p>This builder is provided as user API for constructing the usage specification
    * for a directive.</p>
@@ -155,6 +161,10 @@ public final class UsageDefinition implements Serializable {
    */
   public static UsageDefinition.Builder builder(String directive) {
     return new UsageDefinition.Builder(directive);
+  }
+
+  public Directive define(String durationCol, Class<ColumnName> columnNameClass, String s) {
+      return null;
   }
 
   /**
@@ -235,10 +245,14 @@ public final class UsageDefinition implements Serializable {
     }
 
     /**
-     * @return a instance of <code>UsageDefinition</code> object.
+     * @return an instance of <code>UsageDefinition</code> object.
      */
     public UsageDefinition build() {
       return new UsageDefinition(directive, optionalCnt, tokens);
+    }
+
+    public Row add(String sizeCol, TokenType tokenType, String s, boolean b) {
+        return null;
     }
   }
 }
