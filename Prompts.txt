@@ -1,0 +1,15 @@
+1. How to modify ANTLR grammar to support new token types like BYTE_SIZE and TIME_DURATION in Wrangler?
+2. Provide ANTLR lexer and parser rules for parsing byte size values like "10kb", "1.5MB".
+3. How to add new token types to Wrangler's TokenType enum?
+4. Guide to creating custom parser tokens ByteSize.java and TimeDuration.java in Wrangler.
+5. Suggest a structure for parsing time durations with units like ms, s, min.
+6. How to write a custom directive in Wrangler that supports aggregation?
+7. How to use ExecutorContext and Store to implement accumulation logic across multiple rows in a Wrangler directive?
+8. How to perform final aggregation step in a Wrangler aggregate directive?
+9. Help writing JUnit test for ByteSize and TimeDuration class in Wrangler.
+10. How to use TestingRig to run Wrangler recipes and assert results?
+11. Error fix: Annotation processing is not supported for module cycles [wrangler-core, wrangler-test].
+12. How to disable annotation processing in IntelliJ for specific modules?
+13. Help writing email apology and assignment submission note.
+14. Complete checklist for submitting Zeotap Wrangler assignment with ByteSize and TimeDuration parsing.
+15. Generate test recipe using new aggregate-stats directive with sample data.
