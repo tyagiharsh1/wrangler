@@ -14,7 +14,7 @@
  * the License.
  */
 
-package io.cdap.wrangler.service.directive;
+package io.cdap.wrangler.service.directive.AbstractDirective;
 
 import io.cdap.cdap.api.service.http.HttpServiceContext;
 import io.cdap.cdap.api.service.worker.SystemAppTaskContext;
